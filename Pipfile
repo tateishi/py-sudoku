@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+
+[dev-packages]
+ipython = "*"
+autopep8 = "*"
+flake8 = "*"
+
+[requires]
+python_version = "3.8"
+
+[scripts]
+build = "python setup.py sdist"
+install = "pip install -e ."
+uninstall = "pip uninstall py-sudoku -y"
+ipy = "ipython"
+test = "python tests/test.py"
+lint = "flake8 --show-source"
+autopep8 = "autopep8 --in-place --aggressive --aggressive"
