@@ -160,6 +160,4 @@ def find_single_candidate(sudoku: List[Sudoku]) -> List[SingleCandidate]:
 
 def apply_single_candidates(sudoku: List[Sudoku], candidates: List[SingleCandidate]) -> List[Sudoku]:
     from functools import reduce
-    def put_at(sudoku: List[Sudoku], cell: SingleCandidate) -> List[Sudoku]:
-        return set_at(sudoku, cell.pos, cell.number)
-    return reduce(put_at, candidates, sudoku)
+    return reduce(lambda s, c: set_at(s, c.pos, c.number), candidates, sudoku)
