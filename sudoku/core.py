@@ -1,3 +1,4 @@
+from functools import reduce
 from typing import NamedTuple, List, Set
 
 class Pos(NamedTuple):
@@ -81,7 +82,7 @@ class CellBasic(NamedTuple):
         if self.is_fixed:
             return f'{self.number}'
         else:
-            return f'[{"".join([str(n) for n in self.memo])}]'
+            return f'[{"".join([str(n) for n in sorted(self.memo)])}]'
 
     def set_number(self, number: int):
         return cell_basic_init(number)
@@ -159,13 +160,14 @@ def repeat_until_stable(func, obj):
 class SingleCandidate(NamedTuple):
     pos: Pos
     number: int
+    reason: str = 'unkown'
 
     def __str__(self):
         return f'{self.pos.idx}, {self.number}'
 
 
 def find_single_candidate(sudoku: Sudoku) -> List[SingleCandidate]:
-    return [SingleCandidate(s.pos, s.cell.memo.copy().pop())
+    return [SingleCandidate(s.pos, s.cell.memo.copy().pop(), f'naked single')
             for s in sudoku.cells
             if len(s.cell.memo) == 1]
 
@@ -177,4 +179,62 @@ def apply_single_candidates(sudoku: Sudoku, candidates: List[SingleCandidate]) -
 
 def exec_naked_single(sudoku: Sudoku) -> Sudoku:
     candidates = find_single_candidate(sudoku)
+    return apply_single_candidates(sudoku, candidates)
+
+
+class AppendDict:
+    def __init__(self):
+        self.dict = dict()
+
+    def append(self, key, value):
+        if key in self.dict:
+            self.dict[key].append(value)
+        else:
+            self.dict[key] = [value]
+
+    def items(self):
+        return self.dict.items()
+
+    def __getitem__(self, key):
+        if key in self.dict:
+            return self.dict[key]
+        else:
+            return set()
+
+    def __setitem__(self, key, value):
+        if key in self.dict:
+            self.dict[key].add(value)
+        else:
+            self.dict[key] = set((value,))
+
+    def __str__(self):
+        return str(self.dict)
+
+def find_hidden_single_candidates_peer(sudoku: Sudoku, peer: Peer, reason: str) -> List[SingleCandidate]:
+    def reverse_dict(d: AppendDict, c: Cell) -> AppendDict:
+        if not c.cell.is_fixed:
+            for m in c.cell.memo:
+                d[m] = c.pos.idx
+        return d
+
+    dict = AppendDict()
+    for p in peer.peer:
+        dict = reverse_dict(dict, sudoku.cells[p])
+
+    return [SingleCandidate(Pos(v.copy().pop()), k, reason) for k, v in dict.items() if len(v) == 1]
+
+def find_hidden_single_candidates(sudoku: Sudoku) -> List[SingleCandidate]:
+    from operator import add
+    from functools import reduce
+
+    candidates = (
+        [find_hidden_single_candidates_peer(sudoku, col(n), f'hidden single on col{n}') for n in range(9)] +
+        [find_hidden_single_candidates_peer(sudoku, row(n), f'hidden single on row{n}') for n in range(9)] +
+        [find_hidden_single_candidates_peer(sudoku, blk(n), f'hidden single on blk{n}') for n in range(9)]
+    )
+
+    return reduce(add, candidates)
+
+def exec_hidden_single(sudoku: Sudoku) -> Sudoku:
+    candidates = find_hidden_single_candidates(sudoku)
     return apply_single_candidates(sudoku, candidates)
