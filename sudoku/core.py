@@ -150,6 +150,12 @@ def pprint(sudoku: Sudoku):
         print()
 
 
+def repeat_until_stable(func, obj):
+    while (o := func(obj)) != obj:
+        obj = o
+    return obj
+
+
 class SingleCandidate(NamedTuple):
     pos: Pos
     number: int
@@ -167,3 +173,8 @@ def find_single_candidate(sudoku: Sudoku) -> List[SingleCandidate]:
 def apply_single_candidates(sudoku: Sudoku, candidates: List[SingleCandidate]) -> Sudoku:
     from functools import reduce
     return reduce(lambda s, c: set_at(s, c.pos, c.number), candidates, sudoku)
+
+
+def exec_naked_single(sudoku: Sudoku) -> Sudoku:
+    candidates = find_single_candidate(sudoku)
+    return apply_single_candidates(sudoku, candidates)
