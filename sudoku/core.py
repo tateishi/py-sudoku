@@ -129,15 +129,18 @@ def set_at(sudoku: Sudoku, p: Pos, n: int) -> Sudoku:
 
 def sudoku_load(game: str) -> Sudoku:
     from functools import reduce
+
     def put_at(sudoku: Sudoku, cell: (int, str)) -> Sudoku:
         p, c = cell
         if c in '123456789':
             return set_at(sudoku, Pos(p), int(c))
         return sudoku
+
     sudoku = Sudoku([Cell(Pos(n), cell_basic_init(0)) for n in range(81)])
     problem = [c for c in game if c in '123456789.']
 
     return reduce(put_at, enumerate(problem), sudoku)
+
 
 def pprint(sudoku: Sudoku):
     width = max(3, max(len(str(s.cell)) for s in sudoku.cells))
@@ -166,21 +169,21 @@ class SingleCandidate(NamedTuple):
         return f'{self.pos.idx}, {self.number}'
 
 
-def find_single_candidate(sudoku: Sudoku) -> List[SingleCandidate]:
-    return [SingleCandidate(s.pos, s.cell.memo.copy().pop(), f'naked single')
-            for s in sudoku.cells
-            if len(s.cell.memo) == 1]
+class NakedSingle:
+    @staticmethod
+    def find(sudoku: Sudoku) -> List[SingleCandidate]:
+        return [SingleCandidate(s.pos, s.cell.memo.copy().pop(), f'naked single')
+                for s in sudoku.cells
+                if len(s.cell.memo) == 1]
 
+    @staticmethod
+    def apply(sudoku: Sudoku, candidates: List[SingleCandidate]) -> Sudoku:
+        from functools import reduce
+        return reduce(lambda s, c: set_at(s, c.pos, c.number), candidates, sudoku)
 
-def apply_single_candidates(sudoku: Sudoku, candidates: List[SingleCandidate]) -> Sudoku:
-    from functools import reduce
-    return reduce(lambda s, c: set_at(s, c.pos, c.number), candidates, sudoku)
-
-
-def exec_naked_single(sudoku: Sudoku) -> Sudoku:
-    candidates = find_single_candidate(sudoku)
-    return apply_single_candidates(sudoku, candidates)
-
+    @staticmethod
+    def run(sudoku: Sudoku) -> Sudoku:
+        return NakedSingle.apply(sudoku, NakedSingle.find(sudoku))
 
 class AppendDict:
     def __init__(self):
@@ -210,31 +213,43 @@ class AppendDict:
     def __str__(self):
         return str(self.dict)
 
-def find_hidden_single_candidates_peer(sudoku: Sudoku, peer: Peer, reason: str) -> List[SingleCandidate]:
-    def reverse_dict(d: AppendDict, c: Cell) -> AppendDict:
-        if not c.cell.is_fixed:
-            for m in c.cell.memo:
-                d[m] = c.pos.idx
-        return d
 
-    dict = AppendDict()
-    for p in peer.peer:
-        dict = reverse_dict(dict, sudoku.cells[p])
+class HiddenSingle:
+    @staticmethod
+    def find_peer(sudoku: Sudoku, peer: Peer, reason: str) -> List[SingleCandidate]:
+        def reverse_dict(d: AppendDict, c: Cell) -> AppendDict:
+            if not c.cell.is_fixed:
+                for m in c.cell.memo:
+                    d[m] = c.pos.idx
+            return d
 
-    return [SingleCandidate(Pos(v.copy().pop()), k, reason) for k, v in dict.items() if len(v) == 1]
+        dict = AppendDict()
+        for p in peer.peer:
+            dict = reverse_dict(dict, sudoku.cells[p])
 
-def find_hidden_single_candidates(sudoku: Sudoku) -> List[SingleCandidate]:
-    from operator import add
-    from functools import reduce
+        return [SingleCandidate(Pos(v.copy().pop()), k, reason)
+                for k, v in dict.items() if len(v) == 1]
 
-    candidates = (
-        [find_hidden_single_candidates_peer(sudoku, col(n), f'hidden single on col{n}') for n in range(9)] +
-        [find_hidden_single_candidates_peer(sudoku, row(n), f'hidden single on row{n}') for n in range(9)] +
-        [find_hidden_single_candidates_peer(sudoku, blk(n), f'hidden single on blk{n}') for n in range(9)]
-    )
 
-    return reduce(add, candidates)
+    @staticmethod
+    def find(sudoku: Sudoku) -> List[SingleCandidate]:
+        from operator import add
+        from functools import reduce
 
-def exec_hidden_single(sudoku: Sudoku) -> Sudoku:
-    candidates = find_hidden_single_candidates(sudoku)
-    return apply_single_candidates(sudoku, candidates)
+        candidates = (
+            [HiddenSingle.find_peer(sudoku, col(n), f'hidden single on col{n}') for n in range(9)] +
+            [HiddenSingle.find_peer(sudoku, row(n), f'hidden single on row{n}') for n in range(9)] +
+            [HiddenSingle.find_peer(sudoku, blk(n), f'hidden single on blk{n}') for n in range(9)]
+        )
+
+        return reduce(add, candidates)
+
+
+    @staticmethod
+    def apply(sudoku: Sudoku, candidates: List[SingleCandidate]) -> Sudoku:
+        from functools import reduce
+        return reduce(lambda s, c: set_at(s, c.pos, c.number), candidates, sudoku)
+
+    @staticmethod
+    def run(sudoku: Sudoku) -> Sudoku:
+        return HiddenSingle.apply(sudoku, HiddenSingle.find(sudoku))
