@@ -346,9 +346,14 @@ class HiddenSingle(AlgorithmSingle):
 
         return reduce(add, candidates)
 
-class NakedDouble(AlgorithmDouble):
+class NakedTuple(AlgorithmDouble):
+    def __init__(self, sudoku: Sudoku, n: int, name: str):
+        self.n = n
+        self.name = name
+        super().__init__(sudoku)
+
     def find_peer(self, peer: Peer, reason: str) -> List[MultiCandidate]:
-        def reverse_dict(d: AppendDict, c: Cell, s: set) -> AppendDict:
+        def reverse_dict(d: AppendDict, c: Cell, s: set[int]) -> AppendDict:
             if s >= c.cell.memo:
                 d[frozenset(s)] = c.pos.idx
             return d
@@ -362,7 +367,7 @@ class NakedDouble(AlgorithmDouble):
                  if not self.sudoku.cells[p].cell.is_fixed]
         if len(peers) == 0: return list()
         memos = reduce(or_, (c.cell.memo for c in peers))
-        sets = [set(s) for s in combinations(memos, 2)]
+        sets = [set(s) for s in combinations(memos, self.n)]
 
         dict = AppendDict()
         for s in sets:
@@ -370,10 +375,10 @@ class NakedDouble(AlgorithmDouble):
                 dict = reverse_dict(dict, p, s)
 
         p0 = {p.pos.idx for p in peers}
-        r = f'naked double on {reason}'
+        r = f'naked {self.name} on {reason}'
         candidates = [MultiCandidate(list(p0-v), list(k), r)
                       for k, v in dict.dict.items()
-                      if len(v) == 2]
+                      if len(v) == self.n]
         return candidates
 
     def find(self) -> List[MultiCandidate]:
@@ -389,9 +394,14 @@ class NakedDouble(AlgorithmDouble):
         return reduce(add, candidates)
 
 
-class HiddenDouble(AlgorithmDouble):
+class HiddenTuple(AlgorithmDouble):
+    def __init__(self, sudoku: Sudoku, n: int, name: str):
+        self.n = n
+        self.name = name
+        super().__init__(sudoku)
+
     def find_peer(self, peer: Peer, reason: str) -> List[MultiCandidate]:
-        def reverse_dict(d: AppendDict, c: Cell, s: set) -> AppendDict:
+        def reverse_dict(d: AppendDict, c: Cell, s: set[int]) -> AppendDict:
             if s & c.cell.memo:
                 d[frozenset(s)] = c.pos.idx
             return d
@@ -405,7 +415,7 @@ class HiddenDouble(AlgorithmDouble):
                  if not self.sudoku.cells[p].cell.is_fixed]
         if len(peers) == 0: return list()
         memos = reduce(or_, (c.cell.memo for c in peers))
-        sets = [set(s) for s in combinations(memos, 2)]
+        sets = [set(s) for s in combinations(memos, self.n)]
 
         dict = AppendDict()
         for s in sets:
@@ -413,10 +423,10 @@ class HiddenDouble(AlgorithmDouble):
                 dict = reverse_dict(dict, p, s)
 
         p0 = {p.pos.idx for p in peers}
-        r = f'hidden double on {reason}'
+        r = f'hidden {self.name} on {reason}'
         candidates = [MultiCandidate(list(v), list(set(range(1,10)) - k), r)
                       for k, v in dict.dict.items()
-                      if len(v) == 2]
+                      if len(v) == self.n]
         return candidates
 
     def find(self) -> List[MultiCandidate]:
@@ -432,171 +442,31 @@ class HiddenDouble(AlgorithmDouble):
         return reduce(add, candidates)
 
 
-class NakedTriple(AlgorithmDouble):
-    def find_peer(self, peer: Peer, reason: str) -> List[MultiCandidate]:
-        def reverse_dict(d: AppendDict, c: Cell, s: set) -> AppendDict:
-            if s >= c.cell.memo:
-                d[frozenset(s)] = c.pos.idx
-            return d
+class NakedDouble(NakedTuple):
+    def __init__(self, sudoku: Sudoku):
+        super().__init__(sudoku, 2, 'double')
 
 
-        from operator import or_
-        from functools import reduce
-        from itertools import combinations
-
-        peers = [self.sudoku.cells[p] for p in peer.peer
-                 if not self.sudoku.cells[p].cell.is_fixed]
-        if len(peers) == 0: return list()
-        memos = reduce(or_, (c.cell.memo for c in peers))
-        sets = [set(s) for s in combinations(memos, 3)]
-
-        dict = AppendDict()
-        for s in sets:
-            for p in peers:
-                dict = reverse_dict(dict, p, s)
-
-        p0 = {p.pos.idx for p in peers}
-        r = f'naked triple on {reason}'
-        candidates = [MultiCandidate(list(p0-v), list(k), r)
-                      for k, v in dict.dict.items()
-                      if len(v) == 3]
-        return candidates
-
-    def find(self) -> List[MultiCandidate]:
-        from operator import add
-        from functools import reduce
-
-        candidates = (
-            [self.find_peer(Peer.col(n), f'col{n}') for n in range(9)] +
-            [self.find_peer(Peer.row(n), f'row{n}') for n in range(9)] +
-            [self.find_peer(Peer.blk(n), f'blk{n}') for n in range(9)]
-        )
-
-        return reduce(add, candidates)
+class HiddenDouble(HiddenTuple):
+    def __init__(self, sudoku: Sudoku):
+        super().__init__(sudoku, 2, 'double')
 
 
-class HiddenTriple(AlgorithmDouble):
-    def find_peer(self, peer: Peer, reason: str) -> List[MultiCandidate]:
-        def reverse_dict(d: AppendDict, c: Cell, s: set) -> AppendDict:
-            if s & c.cell.memo:
-                d[frozenset(s)] = c.pos.idx
-            return d
-
-        from operator import or_
-        from functools import reduce
-        from itertools import combinations
-
-        peers = [self.sudoku.cells[p] for p in peer.peer
-                 if not self.sudoku.cells[p].cell.is_fixed]
-        if len(peers) == 0: return list()
-        memos = reduce(or_, (c.cell.memo for c in peers))
-        sets = [set(s) for s in combinations(memos, 3)]
-
-        dict = AppendDict()
-        for s in sets:
-            for p in peers:
-                dict = reverse_dict(dict, p, s)
-
-        p0 = {p.pos.idx for p in peers}
-        r = f'hidden triple on {reason}'
-        candidates = [MultiCandidate(list(v), list(set(range(1,10)) - k), r)
-                      for k, v in dict.dict.items()
-                      if len(v) == 3]
-        return candidates
-
-    def find(self) -> List[MultiCandidate]:
-        from operator import add
-        from functools import reduce
-
-        candidates = (
-            [self.find_peer(Peer.col(n), f'col{n}') for n in range(9)] +
-            [self.find_peer(Peer.row(n), f'row{n}') for n in range(9)] +
-            [self.find_peer(Peer.blk(n), f'blk{n}') for n in range(9)]
-        )
-
-        return reduce(add, candidates)
+class NakedTriple(NakedTuple):
+    def __init__(self, sudoku: Sudoku):
+        super().__init__(sudoku, 3, 'triple')
 
 
-class NakedQuadruple(AlgorithmDouble):
-    def find_peer(self, peer: Peer, reason: str) -> List[MultiCandidate]:
-        def reverse_dict(d: AppendDict, c: Cell, s: set) -> AppendDict:
-            if s >= c.cell.memo:
-                d[frozenset(s)] = c.pos.idx
-            return d
+class HiddenTriple(HiddenTuple):
+    def __init__(self, sudoku: Sudoku):
+        super().__init__(sudoku, 3, 'triple')
 
 
-        from operator import or_
-        from functools import reduce
-        from itertools import combinations
-
-        peers = [self.sudoku.cells[p] for p in peer.peer
-                 if not self.sudoku.cells[p].cell.is_fixed]
-        if len(peers) == 0: return list()
-        memos = reduce(or_, (c.cell.memo for c in peers))
-        sets = [set(s) for s in combinations(memos, 4)]
-
-        dict = AppendDict()
-        for s in sets:
-            for p in peers:
-                dict = reverse_dict(dict, p, s)
-
-        p0 = {p.pos.idx for p in peers}
-        r = f'naked quadruple on {reason}'
-        candidates = [MultiCandidate(list(p0-v), list(k), r)
-                      for k, v in dict.dict.items()
-                      if len(v) == 4]
-        return candidates
-
-    def find(self) -> List[MultiCandidate]:
-        from operator import add
-        from functools import reduce
-
-        candidates = (
-            [self.find_peer(Peer.col(n), f'col{n}') for n in range(9)] +
-            [self.find_peer(Peer.row(n), f'row{n}') for n in range(9)] +
-            [self.find_peer(Peer.blk(n), f'blk{n}') for n in range(9)]
-        )
-
-        return reduce(add, candidates)
+class NakedQuadruple(NakedTuple):
+    def __init__(self, sudoku: Sudoku):
+        super().__init__(sudoku, 4, 'Quadruple')
 
 
-class HiddenQuadruple(AlgorithmDouble):
-    def find_peer(self, peer: Peer, reason: str) -> List[MultiCandidate]:
-        def reverse_dict(d: AppendDict, c: Cell, s: set) -> AppendDict:
-            if s & c.cell.memo:
-                d[frozenset(s)] = c.pos.idx
-            return d
-
-        from operator import or_
-        from functools import reduce
-        from itertools import combinations
-
-        peers = [self.sudoku.cells[p] for p in peer.peer
-                 if not self.sudoku.cells[p].cell.is_fixed]
-        if len(peers) == 0: return list()
-        memos = reduce(or_, (c.cell.memo for c in peers))
-        sets = [set(s) for s in combinations(memos, 4)]
-
-        dict = AppendDict()
-        for s in sets:
-            for p in peers:
-                dict = reverse_dict(dict, p, s)
-
-        p0 = {p.pos.idx for p in peers}
-        r = f'hidden quadruple on {reason}'
-        candidates = [MultiCandidate(list(v), list(set(range(1,10)) - k), r)
-                      for k, v in dict.dict.items()
-                      if len(v) == 4]
-        return candidates
-
-    def find(self) -> List[MultiCandidate]:
-        from operator import add
-        from functools import reduce
-
-        candidates = (
-            [self.find_peer(Peer.col(n), f'col{n}') for n in range(9)] +
-            [self.find_peer(Peer.row(n), f'row{n}') for n in range(9)] +
-            [self.find_peer(Peer.blk(n), f'blk{n}') for n in range(9)]
-        )
-
-        return reduce(add, candidates)
+class HiddenQuadruple(HiddenTuple):
+    def __init__(self, sudoku: Sudoku):
+        super().__init__(sudoku, 4, 'Quadruple')
