@@ -327,7 +327,7 @@ class HiddenSingle(AlgorithmSingle):
 
         dict = AppendDict()
         for p in peer.peer:
-            dict = reverse_dict(dict, self.sudoku.cells[p])
+            dict = reverse_dict(dict, self.sudoku[p])
 
         r = f'hidden single on {reason}'
         return [SingleCandidate(Pos(v.copy().pop()), k, r)
@@ -366,8 +366,8 @@ class AlgorithmTuple(AlgorithmDouble):
         from functools import reduce
         from itertools import combinations
 
-        peers = [self.sudoku.cells[p] for p in peer.peer
-                 if not self.sudoku.cells[p].cell.fixed]
+        peers = [self.sudoku[p] for p in peer.peer
+                 if not self.sudoku[p].cell.fixed]
         if len(peers) == 0: return list()
         memos = reduce(or_, (c.cell.memo for c in peers))
         sets = [set(s) for s in combinations(memos, self.n)]
