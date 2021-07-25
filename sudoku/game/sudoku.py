@@ -1,10 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 
-from .pos import Pos
-from .peer import Peer
-from .cellbasic import CellBasic
-from .cell import Cell
+from . import Pos, Peer, CellBasic, Cell
 
 
 @dataclass
