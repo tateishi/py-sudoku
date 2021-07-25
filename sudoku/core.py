@@ -93,12 +93,12 @@ class Peer:
 
 @dataclass
 class CellBasic:
-    is_fixed: bool = False
+    fixed: bool = False
     number: int = 0
     memo: Set[int] = field(default_factory=set)
 
     def __str__(self):
-        if self.is_fixed:
+        if self.fixed:
             return f'{self.number}'
         else:
             return f'[{"".join([str(n) for n in sorted(self.memo)])}]'
@@ -117,7 +117,7 @@ class CellBasic:
     @classmethod
     def from_number(cls, number: int = 0) -> CellBasic:
         if number > 0:
-            return CellBasic(is_fixed=True, number=number)
+            return CellBasic(fixed=True, number=number)
         else:
             return CellBasic(memo=set(range(1,10)))
 
@@ -161,7 +161,7 @@ class Sudoku:
     @classmethod
     def set(cls, s: Sudoku, p: Pos, n: int) -> Sudoku:
         def el(cell: Cell, p: Pos, n: int) -> Cell:
-            if cell.cell.is_fixed:
+            if cell.cell.fixed:
                 return cell
             elif p == cell.pos:
                 return Cell(cell.pos, CellBasic.from_number(n))
@@ -320,7 +320,7 @@ class AppendDict:
 class HiddenSingle(AlgorithmSingle):
     def find_peer(self, peer: Peer, reason: str) -> List[SingleCandidate]:
         def reverse_dict(d: AppendDict, c: Cell) -> AppendDict:
-            if not c.cell.is_fixed:
+            if not c.cell.fixed:
                 for m in c.cell.memo:
                     d[m] = c.pos.idx
             return d
@@ -367,7 +367,7 @@ class AlgorithmTuple(AlgorithmDouble):
         from itertools import combinations
 
         peers = [self.sudoku.cells[p] for p in peer.peer
-                 if not self.sudoku.cells[p].cell.is_fixed]
+                 if not self.sudoku.cells[p].cell.fixed]
         if len(peers) == 0: return list()
         memos = reduce(or_, (c.cell.memo for c in peers))
         sets = [set(s) for s in combinations(memos, self.n)]
