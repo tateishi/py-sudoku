@@ -1,19 +1,8 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from functools import reduce
-from typing import NamedTuple, List, Set
 
-from . import pos
-from . import peer
-from . import cellbasic
-from . import cell
-from . import sudoku
-
-Pos = pos.Pos
-Peer = peer.Peer
-CellBasic = cellbasic.CellBasic
-Cell = cell.Cell
-Sudoku = sudoku.Sudoku
+from .game import Pos, Peer, CellBasic, Cell, Sudoku
 
 
 @dataclass
