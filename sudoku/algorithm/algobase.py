@@ -24,9 +24,7 @@ class Algorithm:
         return self.apply(found)
 
     def repeat(self) -> Sudoku:
-        self.sudoku.pprint()
         while (o := self.apply_once()) != self.sudoku:
-            o.pprint()
             self.sudoku = o
         return o
 

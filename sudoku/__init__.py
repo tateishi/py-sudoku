@@ -8,6 +8,8 @@ from .algorithm import (
     NakedDouble, HiddenDouble,
     NakedTriple, HiddenTriple,
     NakedQuadruple, HiddenQuadruple)
+from .solver import BaseSolver, Solver
+
 
 VERSION = '0.0.1'
 
