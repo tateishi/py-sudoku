@@ -1,4 +1,4 @@
-from ..game import Sudoku
+from ..model import Sudoku
 
 
 class BaseSolver:

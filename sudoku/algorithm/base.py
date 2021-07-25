@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 
-from ..game import Pos
+from ..model import Pos
 
 
 @dataclass

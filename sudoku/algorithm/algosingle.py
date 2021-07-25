@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..game import Pos, Peer, Cell, Sudoku
+from ..model import Pos, Peer, Cell, Sudoku
 from . import SingleCandidate, AlgorithmSingle, AppendDict
 
 
