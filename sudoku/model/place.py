@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Tuple
 from dataclasses import dataclass
 
 
@@ -32,7 +33,7 @@ class Place:
         return self.index
 
     @classmethod
-    def from_xy(cls, x: int, y: int) -> cls:
+    def from_xy(cls, x: int, y: int) -> Place:
         return cls(x + y * 9)
 
     @property
@@ -40,7 +41,7 @@ class Place:
         return self.index
 
     @property
-    def xy(self) -> (int, int):
+    def xy(self) -> Tuple[int, int]:
         y, x = divmod(self.index, 9)
         return x, y
 
