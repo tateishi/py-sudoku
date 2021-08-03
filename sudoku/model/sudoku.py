@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import List, Tuple
 from dataclasses import dataclass
 
 from . import Pos, Peer, CellBasic, Cell
@@ -15,13 +16,13 @@ class Sudoku:
     def load(cls, game: str) -> Sudoku:
         from functools import reduce
 
-        def put_at(sudoku: Sudoku, cell: (int, str)) -> Sudoku:
+        def put_at(sudoku: Sudoku, cell: Tuple[int, str]) -> Sudoku:
             p, c = cell
             if c in '123456789':
                 return cls.set(sudoku, Pos(p), int(c))
             return sudoku
 
-        sudoku = Sudoku(Cell(Pos(n), CellBasic.unknown()) for n in range(81))
+        sudoku = Sudoku([Cell(Pos(n), CellBasic.unknown()) for n in range(81)])
         problem = [c for c in game if c in '123456789.']
 
         return reduce(put_at, enumerate(problem), sudoku)
