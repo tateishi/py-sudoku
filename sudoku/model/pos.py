@@ -24,17 +24,6 @@ class Pos:
     def __str__(self):
         return str(self.idx)
 
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, int):
-            return self.idx == other
-        elif isinstance(other, Pos):
-            return self.idx == other
-        else:
-            raise NotImplemented
-
-    def __ne__(self, other: object) -> bool:
-        return not self.__eq__(other)
-
     @classmethod
     def from_xy(cls, x: int, y: int) -> Pos:
         return Pos(x + y * 9)
