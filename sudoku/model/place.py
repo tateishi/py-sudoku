@@ -12,11 +12,14 @@ class Place:
 
     def __format__(self, fmt):
         import re
-        if fmt[-1] == 'n':
+        if len(fmt) == 0:
+            fmt = 'i'
             sep = ''
+        elif fmt[-1] in ',. ':
+            sep = fmt[-1]
             fmt = fmt[:-1]
         else:
-            sep = ','
+            sep = ''
         types = 'ixyb'
         fields = { c : getattr(self, c) for c in types }
         comp = re.compile(f'([^{types}]*)([{types}]*)$')
@@ -41,7 +44,7 @@ class Place:
         return self.index
 
     @property
-    def xy(self) -> Tuple[int, int]:
+    def xy(self) -> tuple[int, int]:
         y, x = divmod(self.index, 9)
         return x, y
 
