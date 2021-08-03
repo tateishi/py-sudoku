@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import List
 
 from ..model import Pos, Peer, Cell, Sudoku
 from . import MultiCandidate, AlgorithmDouble, AppendDict
@@ -62,7 +63,7 @@ class NakedTuple(AlgorithmTuple):
 
 class HiddenTuple(AlgorithmTuple):
     def inclusive(self, c: Cell, s: set[int]) -> bool:
-        return s & c.cell.memo
+        return bool(s & c.cell.memo)
 
 
 class NakedDouble(NakedTuple):

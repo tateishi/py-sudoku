@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import List, Set
 from dataclasses import dataclass, field
 from functools import reduce
 
@@ -7,7 +8,7 @@ from . import SingleCandidate, MultiCandidate
 
 
 class Algorithm:
-    def __init__(self, sudoku: Sudoku) -> Algorithm:
+    def __init__(self, sudoku: Sudoku) -> None:
         self.sudoku = sudoku
 
     def pprint(self) -> None:
