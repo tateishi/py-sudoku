@@ -1,13 +1,12 @@
 from __future__ import annotations
-from typing import Set
 from dataclasses import dataclass
 
-#from . import Pos
+from . import Place
 
 
 @dataclass(frozen=True)
 class Peer:
-    peer: Set[int]
+    peer: set[int]
 
     def __str__(self):
         return f'[{",".join(str(p) for p in sorted(self.peer))}]'
@@ -25,35 +24,35 @@ class Peer:
         return len(self.peer)
 
     @classmethod
-    def col(cls, p: int | Pos) -> Peer:
+    def col(cls, p: int | Place) -> Peer:
         if isinstance(p, int):
             return cls({i * 9 + p for i in range(9)})
-        elif isinstance(p, Pos):
+        elif isinstance(p, Place):
             return cls.col(p.x)
         else:
             raise TypeError
 
     @classmethod
-    def row(cls, p: int | Pos) -> Peer:
+    def row(cls, p: int | Place) -> Peer:
         if isinstance(p, int):
             return cls({p * 9 + i for i in range(9)})
-        elif isinstance(p, Pos):
+        elif isinstance(p, Place):
             return cls.row(p.y)
         else:
             raise TypeError
 
     @classmethod
-    def blk(cls, p: int | Pos) -> Peer:
+    def blk(cls, p: int | Place) -> Peer:
         if isinstance(p, int):
             r = p // 3
             c = p % 3
             b = r * 27 + c * 3
             return cls({b + i for i in (0, 1, 2, 9, 10, 11, 18, 19, 20)})
-        elif isinstance(p, Pos):
-            return cls.blk(p.blk)
+        elif isinstance(p, Place):
+            return cls.blk(p.b)
         else:
             raise TypeError
 
     @classmethod
-    def peers(cls, p: Pos) -> Peer:
+    def peers(cls, p: Place) -> Peer:
         return cls.col(p) | cls.row(p) | cls.blk(p)
