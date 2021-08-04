@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 
 
@@ -16,7 +17,7 @@ class Cell:
         else:
             return f'[{"".join(str(n) for n in sorted(self.content))}]'
 
-    def __sub__(self, n: int) -> Cell:
+    def __sub__(self, n: int | Sequence[int]) -> Cell:
         return self.discard(n)
 
     @classmethod
@@ -34,20 +35,17 @@ class Cell:
     def from_memo(cls, memo: set[int]) -> Cell:
         return cls(content=memo)
 
-    def discard(self, memo: int) -> Cell:
+    def discard(self, memo: int | Sequence[int]) -> Cell:
         if isinstance(self.content, int):
             return self
 
         m = self.content.copy()
-        m.discard(memo)
+        if isinstance(memo, int):
+            m.discard(memo)
+        elif isinstance(memo, set):
+            m = m - memo
+        elif isinstance(memo, Sequence):
+            m = m - set(memo)
+        else:
+            raise NotImplementedError
         return type(self).from_memo(m)
-
-    # def remove_memos(self, memos: Set[int]):
-    #     m = self.memo.copy()
-    #     return CellBasic.from_memo(m - memos)
-
-
-# @dataclass
-# class Cell:
-#     pos: Pos
-#     cell: CellBasic
