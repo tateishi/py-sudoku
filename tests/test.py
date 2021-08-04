@@ -37,6 +37,24 @@ class TestCellMethods(unittest.TestCase):
         self.assertEqual(str(c), '[123456789]')
         self.assertFalse(c.fixed)
 
+    def test_cell_from_memo_set(self):
+        c = Cell.from_memo({4, 2})
+        self.assertEqual(str(c), '[24]')
+        self.assertFalse(c.fixed)
+        self.assertEqual(str(c-2), '[4]')
+
+    def test_cell_from_memo_tuple(self):
+        c = Cell.from_memo((4, 2))
+        self.assertEqual(str(c), '[24]')
+        self.assertFalse(c.fixed)
+        self.assertEqual(str(c-2), '[4]')
+
+    def test_cell_from_memo_list(self):
+        c = Cell.from_memo([4, 2])
+        self.assertEqual(str(c), '[24]')
+        self.assertFalse(c.fixed)
+        self.assertEqual(str(c-2), '[4]')
+
     def test_cell_discard(self):
         c = Cell.unknown()
         d = Cell.from_number(1)

@@ -32,8 +32,13 @@ class Cell:
         return cls.from_number(0)
 
     @classmethod
-    def from_memo(cls, memo: set[int]) -> Cell:
-        return cls(content=memo)
+    def from_memo(cls, memo: Sequence[int]) -> Cell:
+        if isinstance(memo, set):
+            return cls(content=memo)
+        elif isinstance(memo, Sequence):
+            return cls(content=set(memo))
+        else:
+            raise NotImplementedError
 
     def discard(self, memo: int | Sequence[int]) -> Cell:
         if isinstance(self.content, int):
