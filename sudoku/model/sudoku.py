@@ -13,28 +13,28 @@ class Sudoku:
 
     @classmethod
     def load(cls, game: str) -> Sudoku:
-        from functools import reduce
-
-        def put_at(sudoku: Sudoku, cell: tuple[int, str]) -> Sudoku:
+        def put_number(sudoku: Sudoku, cell: tuple[int, str]) -> Sudoku:
             p, c = cell
             if c in '123456789':
                 return cls.set(sudoku, Place(p), int(c))
             return sudoku
 
-        sudoku = Sudoku([Grid(Place(n), Cell.unknown()) for n in range(81)])
-        problem = [c for c in game if c in '123456789.']
+        from functools import reduce
 
-        return reduce(put_at, enumerate(problem), sudoku)
+        sudoku = Sudoku(Grid.unknown(n) for n in range(81))
+        problem = (c for c in game if c in '123456789.')
+
+        return reduce(put_number, enumerate(problem), sudoku)
 
     @classmethod
     def set(cls, s: Sudoku, p: Place, n: int) -> Sudoku:
         def el(grid: Grid, p: Place, n: int) -> Grid:
-            if grid.cell.fixed:
+            if grid.fixed:
                 return grid
             elif p == grid.place:
-                return Grid(grid.place, Cell.from_number(n))
-            elif grid.place.i in Peer.peers(p):
-                return Grid(grid.place, grid.cell - n)
+                return grid.from_number(n)
+            elif grid.i in Peer.peers(p):
+                return grid - n
             else:
                 return grid
         return Sudoku([el(g, p, n) for g in s.grids])
