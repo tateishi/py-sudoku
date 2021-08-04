@@ -17,7 +17,7 @@ class Sudoku:
             p, c = cell
             if c not in '123456789':
                 return sudoku
-            return sudoku.fix_number(Place(p), int(c))
+            return sudoku.fix(Place(p), int(c))
 
         from functools import reduce
 
@@ -26,8 +26,8 @@ class Sudoku:
 
         return reduce(put_number, enumerate(problem), sudoku)
 
-    def fix_number(self, p: Place, n: int) -> Sudoku:
-        def fix(grid: Grid, p: Place, n: int) -> Grid:
+    def fix(self, p: Place, n: int) -> Sudoku:
+        def fix_number(grid: Grid, p: Place, n: int) -> Grid:
             if grid.fixed:
                 return grid
             elif p == grid.place:
@@ -36,7 +36,7 @@ class Sudoku:
                 return grid - n
             else:
                 return grid
-        return Sudoku([fix(g, p, n) for g in self.grids])
+        return Sudoku([fix_number(g, p, n) for g in self.grids])
 
     def pprint_str(self) -> str:
         import io
