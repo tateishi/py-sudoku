@@ -1,28 +1,27 @@
 from __future__ import annotations
-from typing import List
 from dataclasses import dataclass
 
-#from ..model import Pos
+from ..model import Place
 
 
 @dataclass
 class SingleCandidate:
-    pos: Pos
+    place: Place
     number: int
     reason: str = 'unkown'
 
     def __str__(self):
-        return f'{self.pos.idx}, {self.number}'
+        return f'{self.place.i}, {self.number}'
 
 
 @dataclass
 class MultiCandidate:
-    pos: List[int]
-    number: List[int]
+    places: list[Place]
+    number: list[int]
     reason: str = 'unkown'
 
     def __str__(self):
-        return f'{self.pos}, {self.number}'
+        return f'{self.places}, {self.number}'
 
 
 class AppendDict:
