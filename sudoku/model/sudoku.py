@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import List, Tuple
 from dataclasses import dataclass
 
-from . import Pos, Peer, CellBasic, Cell
+#from . import Pos, Peer, CellBasic, Cell
 
 
 @dataclass

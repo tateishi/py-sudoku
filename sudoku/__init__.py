@@ -1,7 +1,7 @@
 from . import cli
 from . import core
 
-from .model import Sudoku
+#from .model import Sudoku
 from .algorithm import (
     NakedTuple, HiddenTuple,
     NakedSingle, HiddenSingle,

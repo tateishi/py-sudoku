@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List
 
-from ..model import Pos, Peer, Cell, Sudoku
+#from ..model import Pos, Peer, Cell, Sudoku
 from . import SingleCandidate, AlgorithmSingle, AppendDict
 
 

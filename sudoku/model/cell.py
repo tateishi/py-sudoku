@@ -53,4 +53,4 @@ class Cell:
             m = m - set(memo)
         else:
             raise NotImplementedError
-        return type(self).from_memo(m)
+        return type(self).from_memo(memo=m)
