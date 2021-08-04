@@ -32,7 +32,7 @@ class Sudoku:
                 return grid
             elif p == grid.place:
                 return grid.from_number(n)
-            elif grid.i in Peer.peers(p):
+            elif grid in Peer.peers(p):
                 return grid - n
             else:
                 return grid

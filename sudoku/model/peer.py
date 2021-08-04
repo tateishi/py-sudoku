@@ -1,7 +1,8 @@
 from __future__ import annotations
 from dataclasses import dataclass
 
-from . import Place
+from .place import Place
+from .grid import Grid
 
 
 @dataclass(frozen=True)
@@ -17,8 +18,13 @@ class Peer:
     def __and__(self, p: Peer) -> Peer:
         return Peer(self.peer & p.peer)
 
-    def __contains__(self, n: int) -> bool:
-        return n in self.peer
+    def __contains__(self, n: int | Grid) -> bool:
+        if isinstance(n, int):
+            return n in self.peer
+        elif isinstance(n, Grid):
+            return n.i in self.peer
+        else:
+            raise NotImplementedError
 
     def __len__(self) -> int:
         return len(self.peer)
