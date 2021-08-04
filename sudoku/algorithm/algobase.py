@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from functools import reduce
 
 #from ..model import Pos, Peer, CellBasic, Cell, Sudoku
+from ..model import Place, Peer, Cell, Grid, Sudoku
 from . import SingleCandidate, MultiCandidate
 
 
@@ -37,32 +38,28 @@ class Algorithm:
 
 
 class AlgorithmSingle(Algorithm):
-    def find(self) -> List[SingleCandidate]:
+    def find(self) -> list[SingleCandidate]:
         return list()
 
-    def apply(self, candidates: List[SingleCandidate]) -> Sudoku:
+    def apply(self, candidates: list[SingleCandidate]) -> Sudoku:
+        def fix(s: Sudoku, c: SingleCandidate) -> Sudoku:
+            return s.fix(c.place, c.number)
+
         from functools import reduce
-        return reduce(lambda s, c: Sudoku.set(s, c.pos, c.number),
-                      candidates,
-                      self.sudoku)
+        return reduce(fix, candidates, self.sudoku)
 
 class AlgorithmDouble(Algorithm):
-    def find(self) -> List[MultiCandidate]:
+    def find(self) -> list[MultiCandidate]:
         return list()
 
-    def apply(self, candidates: List[MultiCandidate]) -> Sudoku:
-        def remove_memo(cell: Cell, p: List[int], memo: Set[int]) -> Cell:
-            if cell.pos.idx in p:
-                m = cell.cell.memo.copy()
-                return Cell(cell.pos, CellBasic.from_memo(m - memo))
-            else:
-                return cell
+    def apply(self, candidates: list[MultiCandidate]) -> Sudoku:
+        def remove(grid: Grid, p: list[Place], memo: Sequence[int]) -> Grid:
+            if grid.place in p:
+                return grid - memo
+            return grid
 
-        def apply_candidate(s: Sudoku, mc: MultiCandidate) -> Sudoku:
-            return Sudoku([remove_memo(c, list(mc.pos), set(mc.number))
-                           for c in s])
+        def apply_(s: Sudoku, mc: MultiCandidate) -> Sudoku:
+            return Sudoku(remove(grid, mc.places, mc.number) for grid in s)
 
         from functools import reduce
-        return reduce(lambda s, c: apply_candidate(s, c),
-                      candidates,
-                      self.sudoku)
+        return reduce(apply_, candidates, self.sudoku)
