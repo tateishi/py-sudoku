@@ -3,6 +3,7 @@ from sudoku.model.place import Place
 from sudoku.model.cell import Cell
 from sudoku.model.grid import Grid
 from sudoku.model.peer import Peer
+from sudoku.model.sudoku import Sudoku
 
 
 class TestPlaceMethods(unittest.TestCase):
@@ -160,6 +161,28 @@ class TestPeerMethods(unittest.TestCase):
         self.assertEqual(
             f'{p}',
             '[0,1,2,3,4,5,6,7,8,9,10,11,18,19,20,28,37,46,55,64,73]')
+
+
+class TestSudokuMethods(unittest.TestCase):
+    def test_sudoku(self):
+        from sudoku.problem import pr02
+        s = Sudoku.load(pr02)
+
+        self.assertEqual(
+            s.pprint_str().split("\n")[:-1],
+            [
+             "[458] [3789][359] | [78] [137]   6   |  2   [189] [134] ",
+             " [8]  [3678] [36] |  4     2     9   | [16]   5   [136] ",
+             "[248] [3689]  1   | [8]   [3]    5   |  7    [89] [346] ",
+             "------------------+------------------+------------------",
+             "  3     1    [56] |  9     4     2   | [56]   7     8   ",
+             "  7     2    [69] |  5     8    [1]  |  3     4    [16] ",
+             " [5]    4     8   |  6    [17]   3   | [15]  [12]   9   ",
+             "------------------+------------------+------------------",
+             "  1    [3]    4   | [2]   [9]    7   |  8     6    [25] ",
+             "  6    [8]    7   |  1     5     4   |  9     3    [2]  ",
+             "  9     5     2   |  3     6     8   | [14]  [1]  [147] ",
+             ])
 
 
 if __name__ == '__main__':
