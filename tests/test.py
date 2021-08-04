@@ -1,5 +1,6 @@
 import unittest
 from sudoku.model.place import Place
+from sudoku.model.cell import Cell
 
 class TestPlaceMethods(unittest.TestCase):
     def test_place(self):
@@ -24,6 +25,31 @@ class TestPlaceMethods(unittest.TestCase):
         self.assertEqual(f'{p:<2ixyb}', '426 4 5 ')
         self.assertEqual(f'{p:<2ixyb,}', '42,6 ,4 ,5 ')
 
+
+class TestCellMethods(unittest.TestCase):
+    def test_cell(self):
+        c = Cell.from_number(1)
+        self.assertEqual(str(c), '1')
+
+    def test_cell_unknown(self):
+        c = Cell.unknown()
+        self.assertEqual(str(c), '[123456789]')
+
+    def test_cell_discard(self):
+        c = Cell.unknown()
+        d = Cell.from_number(1)
+        c = c.discard(1)
+        d = d.discard(1)
+        self.assertEqual(str(c), '[23456789]')
+        self.assertEqual(str(d), '1')
+
+    def test_cell_sub(self):
+        c = Cell.unknown()
+        d = Cell.from_number(1)
+        c = c - 1
+        d = d - 1
+        self.assertEqual(str(c), '[23456789]')
+        self.assertEqual(str(d), '1')
 
 if __name__ == '__main__':
     unittest.main()
