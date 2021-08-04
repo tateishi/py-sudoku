@@ -1,6 +1,7 @@
 import unittest
 from sudoku.model.place import Place
 from sudoku.model.cell import Cell
+from sudoku.model.grid import Grid
 
 class TestPlaceMethods(unittest.TestCase):
     def test_place(self):
@@ -118,6 +119,13 @@ class TestCellMethods(unittest.TestCase):
         d = d - [1,2]
         self.assertEqual(str(c), '[3456789]')
         self.assertEqual(str(d), '1')
+
+class TestGridMethods(unittest.TestCase):
+    def test_grid(self):
+        g = Grid(Place(42), Cell.unknown())
+        self.assertEqual(f'{g.place}', '42')
+        self.assertEqual(f'{g.place:ixyb,}', '42,6,4,5')
+        self.assertEqual(f'{g.cell-1}', '[23456789]')
 
 
 if __name__ == '__main__':
