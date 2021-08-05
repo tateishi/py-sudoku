@@ -13,13 +13,6 @@ class NakedSingle(AlgorithmSingle):
                 for g in self.sudoku
                 if g.canfix]
 
-        # return [SingleCandidate(s.place,
-        #                         s.cell.memo.copy().pop(),
-        #                         f'naked single')
-        #         for s in self.sudoku.cells
-        #         if len(s.cell.memo) == 1]
-
-
 
 class HiddenSingle(AlgorithmSingle):
     def find_peer(self, peer: Peer, reason: str) -> List[SingleCandidate]:
