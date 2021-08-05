@@ -56,7 +56,7 @@ class Cell:
         return type(self).from_memo(memo=m)
 
     @property
-    def canfix(self) -> Bool:
+    def canfix(self) -> bool:
         if isinstance(self.content, int):
             return False
 

@@ -28,7 +28,7 @@ class Grid:
         return self.cell.fixed
 
     @property
-    def canfix(self) -> Bool:
+    def canfix(self) -> bool:
         return self.cell.canfix
 
     @property

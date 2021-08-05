@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import List
 
 from ..model import Place, Peer, Cell, Grid, Sudoku
 from . import SingleCandidate, AlgorithmSingle, AppendDict
@@ -8,7 +7,7 @@ from . import SingleCandidate, AlgorithmSingle, AppendDict
 class NakedSingle(AlgorithmSingle):
     reason = f'naked single'
 
-    def find(self) -> List[SingleCandidate]:
+    def find(self) -> list[SingleCandidate]:
         return [SingleCandidate(g.place, g.fixable, self.reason)
                 for g in self.sudoku
                 if g.canfix]
@@ -18,7 +17,7 @@ class HiddenSingle(AlgorithmSingle):
     reason = 'hidden single'
 
     def from_peers(self, peer: Peer, where: str) -> list[SingleCandidate]:
-        def count_numbers(d: AppendDist, g: Grid) -> AppendDict:
+        def count_numbers(d: AppendDict, g: Grid) -> AppendDict:
             if g.fixed:
                 return d
             for m in g.memo:
@@ -33,7 +32,7 @@ class HiddenSingle(AlgorithmSingle):
         return [SingleCandidate(Place(v[0]), k, r)
                 for k, v in dict.items() if len(v) == 1]
 
-    def find(self) -> List[SingleCandidate]:
+    def find(self) -> list[SingleCandidate]:
         from operator import add
         from functools import reduce
 
