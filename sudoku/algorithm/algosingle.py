@@ -15,30 +15,32 @@ class NakedSingle(AlgorithmSingle):
 
 
 class HiddenSingle(AlgorithmSingle):
-    def find_peer(self, peer: Peer, reason: str) -> List[SingleCandidate]:
-        def reverse_dict(d: AppendDict, c: Cell) -> AppendDict:
-            if not c.cell.fixed:
-                for m in c.cell.memo:
-                    d[m] = c.pos.idx
+    reason = 'hidden single'
+
+    def from_peers(self, peer: Peer, where: str) -> list[SingleCandidate]:
+        def count_numbers(d: AppendDist, g: Grid) -> AppendDict:
+            if g.fixed:
+                return d
+            for m in g.memo:
+                d[m] = g.i
             return d
 
-        dict = AppendDict()
-        for p in peer.peer:
-            dict = reverse_dict(dict, self.sudoku.cells[p])
+        from functools import reduce
+        grids = (self.sudoku[p] for p in peer.peer)
+        dict = reduce(count_numbers, grids, AppendDict())
 
-        r = f'hidden single on {reason}'
-        return [SingleCandidate(Pos(v.copy().pop()), k, r)
+        r = f'{self.reason} {where}'
+        return [SingleCandidate(Place(v[0]), k, r)
                 for k, v in dict.items() if len(v) == 1]
-
 
     def find(self) -> List[SingleCandidate]:
         from operator import add
         from functools import reduce
 
         candidates = (
-            [self.find_peer(Peer.col(n), f'col{n}') for n in range(9)] +
-            [self.find_peer(Peer.row(n), f'row{n}') for n in range(9)] +
-            [self.find_peer(Peer.blk(n), f'blk{n}') for n in range(9)]
+            [self.from_peers(Peer.col(n), f'col{n}') for n in range(9)] +
+            [self.from_peers(Peer.row(n), f'row{n}') for n in range(9)] +
+            [self.from_peers(Peer.blk(n), f'blk{n}') for n in range(9)]
         )
 
         return reduce(add, candidates)

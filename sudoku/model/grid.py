@@ -36,6 +36,10 @@ class Grid:
         return self.cell.fixable
 
     @property
+    def memo(self) -> set[int]:
+        return self.cell.content
+
+    @property
     def i(self):
         return self.place.i
 

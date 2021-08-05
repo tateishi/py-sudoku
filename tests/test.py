@@ -185,5 +185,33 @@ class TestSudokuMethods(unittest.TestCase):
              ])
 
 
+class TestAppendDictMethods(unittest.TestCase):
+    def test_init(self):
+        from sudoku.algorithm.base import AppendDict
+
+        d = AppendDict()
+        self.assertEqual(d[1], list())
+
+    def test_append(self):
+        from sudoku.algorithm.base import AppendDict
+
+        d = AppendDict()
+        self.assertEqual(d[0], [])
+        d[0] = 1
+        self.assertEqual(d[0], [1])
+        d[0] = 2
+        self.assertEqual(d[0], [1, 2])
+
+    def test_items(self):
+        from sudoku.algorithm.base import AppendDict
+
+        d = AppendDict()
+        self.assertEqual(d[0], [])
+        d[0] = 1
+        d[0] = 2
+        d[1] = 3
+        self.assertEqual(d[0], [1, 2])
+        self.assertEqual(d[1], [3])
+
 if __name__ == '__main__':
     unittest.main()

@@ -41,13 +41,13 @@ class AppendDict:
         if key in self.dict:
             return self.dict[key]
         else:
-            return set()
+            return list()
 
     def __setitem__(self, key, value):
         if key in self.dict:
-            self.dict[key].add(value)
+            self.dict[key].append(value)
         else:
-            self.dict[key] = set((value,))
+            self.dict[key] = [value]
 
     def __str__(self):
         return str(self.dict)
