@@ -1,18 +1,24 @@
 from __future__ import annotations
 from typing import List
 
-#from ..model import Pos, Peer, Cell, Sudoku
 from ..model import Place, Peer, Cell, Grid, Sudoku
 from . import SingleCandidate, AlgorithmSingle, AppendDict
 
 
 class NakedSingle(AlgorithmSingle):
+    reason = f'naked single'
+
     def find(self) -> List[SingleCandidate]:
-        return [SingleCandidate(s.place,
-                                s.cell.memo.copy().pop(),
-                                f'naked single')
-                for s in self.sudoku.cells
-                if len(s.cell.memo) == 1]
+        return [SingleCandidate(g.place, g.fixable, self.reason)
+                for g in self.sudoku
+                if g.canfix]
+
+        # return [SingleCandidate(s.place,
+        #                         s.cell.memo.copy().pop(),
+        #                         f'naked single')
+        #         for s in self.sudoku.cells
+        #         if len(s.cell.memo) == 1]
+
 
 
 class HiddenSingle(AlgorithmSingle):

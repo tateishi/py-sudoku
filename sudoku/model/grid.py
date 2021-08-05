@@ -28,6 +28,14 @@ class Grid:
         return self.cell.fixed
 
     @property
+    def canfix(self) -> Bool:
+        return self.cell.canfix
+
+    @property
+    def fixable(self) -> int | None:
+        return self.cell.fixable
+
+    @property
     def i(self):
         return self.place.i
 

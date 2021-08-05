@@ -54,3 +54,18 @@ class Cell:
         else:
             raise NotImplementedError
         return type(self).from_memo(memo=m)
+
+    @property
+    def canfix(self) -> Bool:
+        if isinstance(self.content, int):
+            return False
+
+        return len(self.content) == 1
+
+    @property
+    def fixable(self) -> int | None:
+        if isinstance(self.content, int):
+            return None
+        if not self.canfix:
+            return None
+        return self.content.copy().pop()
