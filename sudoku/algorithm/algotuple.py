@@ -58,6 +58,9 @@ class AlgorithmTuple(AlgorithmDouble):
 
         return reduce(add, candidates)
 
+    def new_grid(self, grid: Grid, memo: Sequence[int]) -> Grid:
+        return Grid()
+
     def apply(self, candidates: list[MultiCandidate]) -> Sudoku:
         def remove(grid: Grid, p: list[Place], memo: Sequence[int]) -> Grid:
             if grid.i in p:
@@ -91,7 +94,6 @@ class HiddenTuple(AlgorithmTuple):
 
     def new_grid(self, grid: Grid, memo: Sequence[int]) -> Grid:
         return grid.from_memo(grid.cell.content & set(memo))
-
 
 
 class NakedDouble(NakedTuple):
