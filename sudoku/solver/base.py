@@ -1,7 +1,7 @@
 from ..model import Sudoku
 from ..algorithm import NakedSingle, HiddenSingle, NakedDouble, HiddenDouble, NakedTriple, HiddenTriple
 
-class BaseSolver(object):
+class BaseSolver:
     def __init__(self, sudoku, algorithms):
         self.sudoku = sudoku
         self.algorithms = algorithms
