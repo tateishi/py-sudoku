@@ -2,10 +2,13 @@ from ..model import Sudoku
 from ..algorithm import NakedSingle, HiddenSingle, NakedDouble, HiddenDouble, NakedTriple, HiddenTriple
 
 class BaseSolver:
-    def __init__(self, sudoku, algorithms):
-        self.sudoku = sudoku
+    def __init__(self, algorithms=None, sudoku=None):
         self.algorithms = algorithms
+        self.sudoku = sudoku
         self.result = None
+
+    def load(self, s:str) -> None:
+        self.sudoku = Sudoku.load(s)
 
     def run_once(self, algorithm):
         print(f'run_once: {algorithm}')
@@ -42,8 +45,8 @@ class Solver(BaseSolver):
         HiddenTriple,
     ]
 
-    def __init__(self, sudoku: Sudoku) -> None:
-        super().__init__(sudoku, self.algorithms)
+    def __init__(self, sudoku: Sudoku=None) -> None:
+        super().__init__(self.algorithms, sudoku)
 
     def pprint(self) -> None:
         self.sudoku.pprint()
