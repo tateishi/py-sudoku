@@ -9,6 +9,8 @@ from . import SingleCandidate, MultiCandidate
 
 
 class Algorithm:
+    reason = ''
+
     def __init__(self, sudoku: Sudoku) -> None:
         self.sudoku = sudoku
 
@@ -53,13 +55,4 @@ class AlgorithmDouble(Algorithm):
         return list()
 
     def apply(self, candidates: list[MultiCandidate]) -> Sudoku:
-        def remove(grid: Grid, p: list[Place], memo: Sequence[int]) -> Grid:
-            if grid.place in p:
-                return grid - memo
-            return grid
-
-        def apply_(s: Sudoku, mc: MultiCandidate) -> Sudoku:
-            return Sudoku(remove(grid, mc.places, mc.number) for grid in s)
-
-        from functools import reduce
-        return reduce(apply_, candidates, self.sudoku)
+        return self.sudoku

@@ -17,7 +17,7 @@ class Grid:
         return type(self)(self.place, Cell.from_number(number))
 
     def from_memo(self, memo: Sequence[int]) -> Grid:
-        return type(self)(self.place, memo)
+        return type(self)(self.place, Cell.from_memo(memo))
 
     @classmethod
     def unknown(cls, n: int) -> Grid:
