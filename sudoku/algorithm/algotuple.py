@@ -28,7 +28,8 @@ class AlgorithmTuple(AlgorithmDouble):
         from functools import reduce
         from itertools import combinations
 
-        def count_numbers(d: AppendDict, g: Grid, s: set[int]) -> AppendDict:
+        def count_numbers(d: AppendDict, x: tuple(Grid, set[int])) -> AppendDict:
+            g, s = x
             if self.inclusive(g, s):
                 d[frozenset(s)] = g.i
             return d
@@ -39,10 +40,9 @@ class AlgorithmTuple(AlgorithmDouble):
         free_number = reduce(or_, (g.cell.content for g in grids))
         free_combinations = (set(s) for s in combinations(free_number, self.n))
 
-        numbers = AppendDict()
-        for s in free_combinations:
-            for g in grids:
-                numbers = count_numbers(numbers, g, s)
+        numbers = reduce(count_numbers,
+                         ((g, s) for g in grids for s in free_combinations),
+                         AppendDict())
 
         return self.get_candidates(numbers, grids, where)
 
