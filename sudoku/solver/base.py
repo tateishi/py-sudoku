@@ -25,13 +25,17 @@ class BaseSolver:
                 return new
         return old
 
-    def run(self):
+    def run(self) -> bool:
         print(f'run: {self.algorithms}')
         while True:
+            if self.sudoku.solved:
+                print("SOLVED!")
+                return True
             new = self.run_loop(self.algorithms)
             if self.sudoku == new:
                 self.result = self.sudoku
-                return
+                print("FAIL!")
+                return False
             self.sudoku = new
 
 

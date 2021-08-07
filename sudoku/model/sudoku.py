@@ -26,6 +26,14 @@ class Sudoku:
 
         return reduce(put_number, enumerate(problem), sudoku)
 
+    @property
+    def solved(self) -> bool:
+        return all(grid.fixed for grid in self.grids)
+
+    @property
+    def fail(self) -> bool:
+        return any(len(grid.memo) == 0 for grid in self.grids if not grid.fixed)
+
     def fix(self, p: Place, n: int) -> Sudoku:
         def fix_number(grid: Grid, p: Place, n: int) -> Grid:
             if grid.fixed:
