@@ -1,5 +1,5 @@
 from ..model import Sudoku
-from ..algorithm import NakedSingle, HiddenSingle, NakedDouble, HiddenDouble, NakedTriple, HiddenTriple
+from ..algorithm import NakedSingle, HiddenSingle, NakedDouble, HiddenDouble, NakedTriple, HiddenTriple, NakedQuadruple, HiddenQuadruple
 
 class BaseSolver:
     def __init__(self, algorithms=None, sudoku=None):
@@ -43,6 +43,8 @@ class Solver(BaseSolver):
         HiddenDouble,
         NakedTriple,
         HiddenTriple,
+        NakedQuadruple,
+        HiddenQuadruple,
     ]
 
     def __init__(self, sudoku: Sudoku=None) -> None:

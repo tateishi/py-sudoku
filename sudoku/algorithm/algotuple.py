@@ -34,17 +34,16 @@ class AlgorithmTuple(AlgorithmDouble):
                 d[frozenset(s)] = g.i
             return d
 
-        grids = [self.sudoku[p] for p in peer.peer if not self.sudoku[p].fixed]
-        if len(grids) == 0: return list()
+        free_grids = [g for g in self.sudoku if g in peer and not g.fixed]
+        if len(free_grids) == 0: return list()
 
-        free_number = reduce(or_, (g.cell.content for g in grids))
-        free_combinations = (set(s) for s in combinations(free_number, self.n))
-
+        free_number = reduce(or_, (g.cell.content for g in free_grids))
+        free_combinations = [set(s) for s in combinations(free_number, self.n)]
         numbers = reduce(count_numbers,
-                         ((g, s) for g in grids for s in free_combinations),
+                         ((g, s) for g in free_grids for s in free_combinations),
                          AppendDict())
 
-        return self.get_candidates(numbers, grids, where)
+        return self.get_candidates(numbers, free_grids, where)
 
     def find(self) -> list[MultiCandidate]:
         from operator import add
