@@ -6,3 +6,4 @@ from .algotuple import (
     NakedDouble, HiddenDouble,
     NakedTriple, HiddenTriple,
     NakedQuadruple, HiddenQuadruple)
+from .algobrute import BruteForce

@@ -1,9 +1,5 @@
 from __future__ import annotations
-from typing import List, Set
-from dataclasses import dataclass, field
-from functools import reduce
 
-#from ..model import Pos, Peer, CellBasic, Cell, Sudoku
 from ..model import Place, Peer, Cell, Grid, Sudoku
 from . import SingleCandidate, MultiCandidate
 
