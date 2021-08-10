@@ -39,7 +39,10 @@ class Sudoku:
             if grid.fixed:
                 return grid
             elif p == grid.place:
-                return grid.from_number(n)
+                if n in grid.cell.content:
+                    return grid.from_number(n)
+                else:
+                    return grid
             elif grid in Peer.peers(p):
                 return grid - n
             else:
