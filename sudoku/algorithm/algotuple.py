@@ -46,16 +46,14 @@ class AlgorithmTuple(AlgorithmDouble):
         return self.get_candidates(numbers, free_grids, where)
 
     def find(self) -> list[MultiCandidate]:
-        from operator import add
-        from functools import reduce
-
         candidates = (
             [self.from_peers(Peer.col(n), f'col{n}') for n in range(9)] +
             [self.from_peers(Peer.row(n), f'row{n}') for n in range(9)] +
             [self.from_peers(Peer.blk(n), f'blk{n}') for n in range(9)]
         )
 
-        return reduce(add, candidates)
+        from itertools import chain
+        return chain(*candidates)
 
     def new_grid(self, grid: Grid, memo: Sequence[int]) -> Grid:
         return Grid()
