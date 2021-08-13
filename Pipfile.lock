@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a567bec06e1b0b37af90e20e73985d5d0eb3f17439cc0cb58f033d48f25b02c9"
+            "sha256": "e6a2c7affe0c2ac5ce043be2b8edb83cc879346d41bfc9ba3f3cfca08a6b5b84"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -17,6 +17,13 @@
     },
     "default": {},
     "develop": {
+        "appdirs": {
+            "hashes": [
+                "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41",
+                "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"
+            ],
+            "version": "==1.4.4"
+        },
         "autopep8": {
             "hashes": [
                 "sha256:276ced7e9e3cb22e5d7c14748384a5cf5d9002257c0ed50c0e075b68011bb6d0",
@@ -151,6 +158,14 @@
                 "sha256:7089d8d2938043508aa9420ec18ce0922885304cddae87fb96eebca942299f88"
             ],
             "markers": "python_full_version >= '3.6.1'",
+            "version": "==3.0.19"
+        },
+        "ptpython": {
+            "hashes": [
+                "sha256:b3d41ce7c2ce0e7e55051347eae400fc56b9b42b1c4a9db25b19ccf6195bfc12",
+                "sha256:c0f5d6516077d95175169fbc9bf9ade9211bbfdbd2e665c96e34637e3b0f9ae2"
+            ],
+            "index": "pypi",
             "version": "==3.0.19"
         },
         "ptyprocess": {

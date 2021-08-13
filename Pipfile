@@ -10,6 +10,7 @@ ipython = "*"
 autopep8 = "*"
 flake8 = "*"
 mypy = "*"
+ptpython = "*"
 
 [requires]
 python_version = "3.8"
