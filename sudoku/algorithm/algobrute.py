@@ -29,11 +29,11 @@ class BruteForce(Algorithm):
         return (sudoku for sudoku in result if not sudoku.fail)
 
 
-    def step(self, sudokus: list[Sudoku]) -> tuple[bool, list[Sudoku]]:
+    def step(self, sudokus: Sequence[Sudoku]) -> tuple[bool, Sequence[Sudoku]]:
         result = (self.trial(sudoku) for sudoku in sudokus)
 
         from itertools import chain
-        r = list(chain(*result))
+        r = list(chain.from_iterable(result))
         solved = [s for s in r if s.solved]
         if len(solved) > 0:
             return True, solved
