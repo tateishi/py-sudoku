@@ -34,6 +34,8 @@ class Algorithm:
     def run(self) -> None:
         self.sudoku = self.repeat()
 
+    def solve(self) -> Sudoku:
+        return self.repeat()
 
 class AlgorithmSingle(Algorithm):
     def find(self) -> list[SingleCandidate]:
