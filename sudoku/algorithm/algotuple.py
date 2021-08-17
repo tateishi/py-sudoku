@@ -2,7 +2,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from ..model import Place, Cell, Grid, Peer, Sudoku
-from . import MultiCandidate, AlgorithmDouble, AppendDict
+from . import MultiCandidate, AlgorithmDouble
 
 
 class AlgorithmTuple(AlgorithmDouble):
@@ -16,23 +16,24 @@ class AlgorithmTuple(AlgorithmDouble):
     def candidate_peer(self, p: list[int], v: list[int]) -> list[int]:
         return list()
 
-    def get_candidates(self, numbers: AppendDict, grids: list[Grid], where: str) -> list[MultiCandidate]:
-        p = [g.i for g in grids]
-        r = f'{self.reason} on {where}'
-        return [MultiCandidate(self.candidate_peer(p, v), list(k), r)
-                for k, v in numbers.items()
-                if len(v) == self.n]
-
     def from_peers(self, peer: Peer, where: str) -> list[MultiCandidate]:
         from operator import or_
         from functools import reduce
         from itertools import combinations
+        from collections import defaultdict
 
-        def count_numbers(d: AppendDict, x: tuple(Grid, set[int])) -> AppendDict:
+        def count_numbers(d: defaultdict, x: tuple(Grid, set[int])) -> defaultdict:
             g, s = x
             if self.inclusive(g, s):
-                d[frozenset(s)] = g.i
+                d[frozenset(s)].append(g.i)
             return d
+
+        def get_candidates(numbers: defaultdict, grids: list[Grid], where: str) -> list[MultiCandidate]:
+            p = [g.i for g in grids]
+            r = f'{self.reason} on {where}'
+            return (MultiCandidate(self.candidate_peer(p, v), list(k), r)
+                    for k, v in numbers.items()
+                    if len(v) == self.n)
 
         free_grids = [g for g in self.sudoku if g in peer and not g.fixed]
         if len(free_grids) == 0: return list()
@@ -41,19 +42,17 @@ class AlgorithmTuple(AlgorithmDouble):
         free_combinations = [set(s) for s in combinations(free_number, self.n)]
         numbers = reduce(count_numbers,
                          ((g, s) for g in free_grids for s in free_combinations),
-                         AppendDict())
+                         defaultdict(list))
 
-        return self.get_candidates(numbers, free_grids, where)
+        return get_candidates(numbers, free_grids, where)
 
     def find(self) -> list[MultiCandidate]:
-        candidates = (
-            [self.from_peers(Peer.col(n), f'col{n}') for n in range(9)] +
-            [self.from_peers(Peer.row(n), f'row{n}') for n in range(9)] +
-            [self.from_peers(Peer.blk(n), f'blk{n}') for n in range(9)]
-        )
-
         from itertools import chain
-        return chain(*candidates)
+        return chain.from_iterable(chain(
+            (self.from_peers(Peer.col(n), f'col{n}') for n in range(9)),
+            (self.from_peers(Peer.row(n), f'row{n}') for n in range(9)),
+            (self.from_peers(Peer.blk(n), f'blk{n}') for n in range(9))
+        ))
 
     def new_grid(self, grid: Grid, memo: Sequence[int]) -> Grid:
         return Grid()

@@ -1,4 +1,4 @@
-from .base import SingleCandidate, MultiCandidate, AppendDict
+from .base import SingleCandidate, MultiCandidate
 from .algobase import Algorithm, AlgorithmSingle, AlgorithmDouble
 from .algosingle import NakedSingle, HiddenSingle
 from .algotuple import (
