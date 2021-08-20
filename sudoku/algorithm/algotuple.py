@@ -16,37 +16,36 @@ class AlgorithmTuple(AlgorithmDouble):
     def candidate_peer(self, p: list[int], v: list[int]) -> list[int]:
         return list()
 
-    def from_peers(self, peer: Peer, where: str) -> list[MultiCandidate]:
+    def from_peers(self, peer: Peer, where: str) -> Sequence[MultiCandidate]:
         from operator import or_
         from functools import reduce
-        from itertools import combinations
+        from itertools import combinations, product
         from collections import defaultdict
 
-        def count_numbers(d: defaultdict, x: tuple(Grid, set[int])) -> defaultdict:
+        def choicedict(d: defaultdict, x: tuple(Grid, set[int])) -> defaultdict:
             g, s = x
             if self.inclusive(g, s):
                 d[frozenset(s)].append(g.i)
             return d
 
-        def get_candidates(numbers: defaultdict, grids: list[Grid], where: str) -> list[MultiCandidate]:
+        def get_candidates(numbers: defaultdict, grids: Sequence[Grid], where: str) -> Sequence[MultiCandidate]:
             p = [g.i for g in grids]
             r = f'{self.reason} on {where}'
             return (MultiCandidate(self.candidate_peer(p, v), list(k), r)
                     for k, v in numbers.items()
                     if len(v) == self.n)
 
-        free_grids = [g for g in self.sudoku if g in peer and not g.fixed]
-        if len(free_grids) == 0: return list()
+        grids = [g for g in self.sudoku[peer] if not g.fixed]
+        if len(grids) == 0: return list()
 
-        free_number = reduce(or_, (g.cell.content for g in free_grids))
-        free_combinations = [set(s) for s in combinations(free_number, self.n)]
-        numbers = reduce(count_numbers,
-                         ((g, s) for g in free_grids for s in free_combinations),
-                         defaultdict(list))
+        nums = reduce(or_, (g.cell.content for g in grids))
+        combi = (set(s) for s in combinations(nums, self.n))
 
-        return get_candidates(numbers, free_grids, where)
+        numbers = reduce(choicedict, product(grids, combi), defaultdict(list))
 
-    def find(self) -> list[MultiCandidate]:
+        return get_candidates(numbers, grids, where)
+
+    def find(self) -> Sequence[MultiCandidate]:
         from itertools import chain
         return chain.from_iterable(chain(
             (self.from_peers(Peer.col(n), f'col{n}') for n in range(9)),
@@ -57,7 +56,7 @@ class AlgorithmTuple(AlgorithmDouble):
     def new_grid(self, grid: Grid, memo: Sequence[int]) -> Grid:
         return Grid()
 
-    def apply(self, candidates: list[MultiCandidate]) -> Sudoku:
+    def apply(self, candidates: Sequence[MultiCandidate]) -> Sudoku:
         def remove(grid: Grid, p: list[Place], memo: Sequence[int]) -> Grid:
             if grid.i in p:
                 return self.new_grid(grid, memo)

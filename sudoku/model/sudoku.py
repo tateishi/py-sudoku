@@ -9,7 +9,12 @@ class Sudoku:
     grids: list[Grid]
 
     def __getitem__(self, n):
-        return self.grids[n]
+        if isinstance(n, int):
+            return self.grids[n]
+        elif isinstance(n, Peer):
+            return (self.grids[p] for p in n.peer)
+        else:
+            raise NotImplementedError
 
     @classmethod
     def load(cls, game: str) -> Sudoku:
